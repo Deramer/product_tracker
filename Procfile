@@ -1,1 +1,1 @@
-web: product_tracker.wsgi
+web: gunicorn product_tracker.wsgi
