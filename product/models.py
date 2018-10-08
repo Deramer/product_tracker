@@ -10,9 +10,9 @@ class Product(models.Model):
         verbose_name_plural = 'продукты'
         indexes = (models.Index(fields=('bar_code', )), )
 
-    name = models.CharField(max_length=255, verbose_name='название')
-    description = models.TextField(max_length=10000, null=True, blank=True, verbose_name='описание')
-    composition = models.TextField(max_length=10000, null=True, blank=True, verbose_name='состав')
+    name = models.CharField(max_length=4000, verbose_name='название')
+    description = models.TextField(max_length=40000, null=True, blank=True, verbose_name='описание')
+    composition = models.TextField(max_length=40000, null=True, blank=True, verbose_name='состав')
     bar_code = models.CharField(max_length=13, unique=True, verbose_name='штрих-код')
     image = models.ImageField(upload_to='product_images', null=True, blank=True, verbose_name='картинка')
 
