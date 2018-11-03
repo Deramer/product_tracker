@@ -2,8 +2,10 @@
 
 from bs4 import BeautifulSoup
 import requests
+from os.path import join
 
 from django.http import HttpResponseBadRequest
+from django.conf import settings
 
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -33,7 +35,13 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
                 name = soup.find(id='ctl00_ContentPH_GoodsName').text
                 description = soup.find(id='ctl00_ContentPH_Comment').text
                 composition = soup.find(id='ctl00_ContentPH_Composition').text
+                image_url = 'http://goodsmatrix.ru/BigImages/' + bar_code + '.jpg'
+                img = requests.get(image_url)
+                path = join(settings.MEDIA_ROOT, 'big_images', bar_code + '.jpg')
+                with open(path, 'wb') as img_file:
+                    img_file.write(img.content)
                 product = Product(name=name, bar_code=bar_code, description=description, composition=composition)
+                product.image.name = path
                 product.save()
                 return Response(ProductSerializer(instance=product).data)
             else:
