@@ -11,8 +11,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-import django_heroku
-import dj_database_url
+#import django_heroku
+#import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,7 +27,7 @@ SECRET_KEY = '*w)q%+%u#km+07h5hrt@h0bs7&$fjxdhm*qq^l*3yw_&=+z)vq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['food.lvh.me']
+ALLOWED_HOSTS = ['food.lvh.me', '95.163.215.113']
 
 
 # Application definition
@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'product_tracker.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-'''
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -88,9 +88,9 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-'''
 
-DATABASES = {'default': dj_database_url.config(conn_max_age=600, ssl_require=True)}
+
+#DATABASES = {'default': dj_database_url.config(conn_max_age=600, ssl_require=True)}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -130,6 +130,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
-django_heroku.settings(locals())
+#django_heroku.settings(locals())
