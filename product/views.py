@@ -2,10 +2,12 @@
 
 from bs4 import BeautifulSoup
 import requests
+import json
 from os.path import join
 
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.conf import settings
+from django.views.generic import View
 
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -49,3 +51,20 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
             else:
                 return HttpResponseBadRequest('No such bar code in database')
 
+class PromocodeView(View):
+
+    def get(self, request, *args, **kwargs):
+        resp = requests.get('https://7days.ru/promokodi/perekrestok-promokod')
+        soup = BeautifulSoup(resp.text)
+        ids = [x['data-gtm-voucher-id'] for x in soup.findAll('div', {'class': 'sevendaysru-new-voucher'})]
+        results = []
+        for id in ids:
+            resp = requests.get('https://7days.ru/promokodi/ajax/voucherpopup?id=' + id)
+            data = json.loads(resp.text)
+            results.append({
+                'url': data['voucher']['affiliate_url'],
+                'desc': data['voucher']['description'],
+                'title': data['voucher']['title'],
+                'code': data['voucher']['code'],
+            })
+        return JsonResponse({'promocodes': results})
