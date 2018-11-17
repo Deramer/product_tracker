@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import requests
 import json
 from os.path import join
+import asyncio
 
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.conf import settings
@@ -51,13 +52,30 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
             else:
                 return HttpResponseBadRequest('No such bar code in database')
 
+
+async def get_promocode_details(id1):
+    return requests.get('https://7days.ru/promokodi/ajax/voucherpopup?id=' + id1)
+
+
 class PromocodeView(View):
 
     def get(self, request, *args, **kwargs):
+        """
         resp = requests.get('https://7days.ru/promokodi/perekrestok-promokod')
         soup = BeautifulSoup(resp.text)
         ids = [x['data-gtm-voucher-id'] for x in soup.findAll('div', {'class': 'sevendaysru-new-voucher'})]
-        results = []
+        loop = asyncio.get_event_loop()
+        tasks = [asyncio.async(get_promocode_details(id1)) for id1 in ids]
+        loop.run_until_complete(asyncio.wait(tasks))
+        responses = [task.result() for task in tasks]
+        texts = [json.loads(resp.text) for resp in responses]
+        results = [{
+                'url': data['voucher']['affiliate_url'],
+                'desc': data['voucher']['description'],
+                'title': data['voucher']['title'],
+                'code': data['voucher']['code'],
+            } for data in texts]
+        
         for id in ids:
             resp = requests.get('https://7days.ru/promokodi/ajax/voucherpopup?id=' + id)
             data = json.loads(resp.text)
@@ -67,4 +85,8 @@ class PromocodeView(View):
                 'title': data['voucher']['title'],
                 'code': data['voucher']['code'],
             })
-        return JsonResponse({'promocodes': results})
+        """
+        with open('hardcode_promo', 'r') as hard:
+            hardcode = next(hard)[:-1]
+        return JsonResponse(json.loads(hardcode))
+
