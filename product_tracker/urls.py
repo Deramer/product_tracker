@@ -21,11 +21,15 @@ from product_tracker.routers import router
 
 from product.views import PromocodeView
 from shoplist.views import ShoplistView
+from recipe.views import ScrapeView, RecipeView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^api/v1/', include(router.urls)),
     url(r'^api/v1/promocodes', PromocodeView.as_view()),
     url(r'api/v1/shoplist', ShoplistView.as_view()),
+    url(r'api/v1/recipe', RecipeView.as_view()),
+    url(r'scrape_recipes', ScrapeView.as_view()),
     url(r'^api-auth/', include('rest_framework.urls')),
 ]
